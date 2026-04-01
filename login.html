@@ -1,0 +1,145 @@
+<!doctype html>
+<html>
+<head>
+<title>Login</title>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #141e30, #243b55); /* Original gradient kept */
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    color: white;
+  }
+
+  .box {
+    background: rgba(255, 255, 255, 0.1); /* Glassmorphism effect */
+    backdrop-filter: blur(10px);
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+    width: 320px;
+    border: 1px solid rgba(255,255,255,0.1);
+    text-align: center;
+  }
+
+  h1 { margin-bottom: 25px; font-weight: 300; letter-spacing: 2px; }
+
+  .input-group { position: relative; margin-bottom: 20px; }
+
+  input {
+    width: 100%;
+    padding: 12px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 8px;
+    color: white;
+    outline: none;
+    box-sizing: border-box; /* Proper sizing */
+    transition: 0.3s;
+  }
+
+  input:focus { border-color: #ff4b2b; background: rgba(255,255,255,0.1); }
+
+  button {
+    background: #ff4b2b; /* Original button color */
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    width: 100%;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-top: 10px;
+  }
+
+  button:hover { background: #ff2e00; transform: translateY(-2px); }
+
+  .links { margin-top: 20px; font-size: 14px; color: #bbb; }
+  .links a { color: #ff4b2b; text-decoration: none; font-weight: bold; }
+
+  #togglePass {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 12px;
+    color: #bbb;
+    user-select: none;
+  }
+</style>
+</head>
+<body>
+
+<div class="box">
+  <h1>WELCOME</h1>
+
+  <div class="input-group">
+    <input type="text" id="user" placeholder="Username">
+  </div>
+
+  <div class="input-group">
+    <input type="password" id="pass" placeholder="Password">
+    <span id="togglePass" onclick="togglePassword()">SHOW</span>
+  </div>
+
+  <button onclick="login()">Login Now</button>
+
+  <div class="links">
+    New user? <a href="signup.html">Create Account</a>
+  </div>
+</div>
+
+<script>
+// 1. Password Show/Hide Toggle
+function togglePassword() {
+  let passInput = document.getElementById("pass");
+  let toggleBtn = document.getElementById("togglePass");
+  if (passInput.type === "password") {
+    passInput.type = "text";
+    toggleBtn.innerText = "HIDE";
+  } else {
+    passInput.type = "password";
+    toggleBtn.innerText = "SHOW";
+  }
+}
+
+// 2. Upgraded Login Logic with SweetAlert2
+function login() {
+  let u = document.getElementById("user").value.trim();
+  let p = document.getElementById("pass").value.trim();
+
+  let savedUser = localStorage.getItem("username"); //
+  let savedPass = localStorage.getItem("password"); //
+
+  if (!u || !p) {
+    Swal.fire({ icon: 'warning', title: 'Oops...', text: 'Please fill all fields! ❗' });
+    return;
+  }
+
+  if (u === savedUser && p === savedPass) {
+    localStorage.setItem("loggedIn", "true"); //
+    localStorage.setItem("username", u); //
+
+    Swal.fire({
+      icon: 'success',
+      title: 'Login Successful!',
+      showConfirmButton: false,
+      timer: 1500
+    }).then(() => {
+      window.location.href = "category.html"; //
+    });
+  } else {
+    Swal.fire({ icon: 'error', title: 'Access Denied', text: 'Wrong Username or Password ❌' });
+  }
+}
+</script>
+
+</body>
+</html>
