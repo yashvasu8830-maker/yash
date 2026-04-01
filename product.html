@@ -1,0 +1,75 @@
+<!doctype html>
+<html>
+<head>
+<title>Product</title>
+
+<style>
+body{font-family:Arial;background:#0f2027;color:white;text-align:center}
+img{width:300px;border-radius:10px}
+button{padding:10px;background:red;color:white;border:none;margin:10px}
+#price{color:#00e676}
+</style>
+
+</head>
+<script>
+if(localStorage.getItem("loggedIn") !== "true"){
+  alert("Login required ❌");
+  window.location.href = "login.html";
+}
+</script>
+
+<body>
+
+<button onclick="back()">⬅ Back</button>
+
+<h1 id="pname"></h1>
+<h2 id="price"></h2>
+<h3 id="pcategory"></h3>
+
+<img id="pimage"><br>
+
+<p id="pdesc"></p>
+<p id="pspecs"></p>
+
+<button onclick="buyNow()">🛒 Buy Now</button>
+<p id="ownerEmail" style="color:yellow;"></p>
+
+<script>
+
+// 🔹 Get products
+let products = JSON.parse(localStorage.getItem("products")) || [];
+
+// 🔹 Get selected index safely
+let index = localStorage.getItem("selectedIndex");
+
+if(index === null || !products[index]){
+  alert("Product not found ❌");
+  window.location.href = "products.html";
+}
+
+// 🔹 Get product
+let p = products[index];
+
+// 🔹 Set data
+document.getElementById("pname").innerText = p.name || "";
+document.getElementById("pcategory").innerText = p.category || "";
+document.getElementById("pdesc").innerText = p.desc || "";
+document.getElementById("pspecs").innerText = p.specs || "";
+document.getElementById("pimage").src = p.image || "";
+document.getElementById("price").innerText = "₹" + (p.price || "0");
+
+// 🔹 Buy button
+function buyNow(){
+  document.getElementById("ownerEmail").innerText =
+    "Contact Seller: " + (p.email || "Not available");
+}
+
+// 🔹 Back button
+function back(){
+  window.location.href="products.html";
+}
+
+</script>
+
+</body>
+</html>

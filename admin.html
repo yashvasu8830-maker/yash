@@ -1,0 +1,83 @@
+<!doctype html>
+<html>
+<head>
+<title>Admin Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<style>
+  body { font-family: 'Segoe UI', Arial; background: #1e3c72; color: white; margin: 0; text-align: center; }
+  .topbar { display: flex; align-items: center; justify-content: space-between; padding: 10px 20px; background: #0f2027; }
+  .btn-nav { background: white; color: black; padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; text-decoration: none; }
+  .container { padding: 20px; display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; }
+  .admin-card { background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; width: 200px; text-align: center; border: 1px solid rgba(255,255,255,0.1); }
+  .admin-card img { width: 100%; height: 120px; border-radius: 8px; object-fit: cover; }
+  
+  .btn-group { display: flex; gap: 5px; margin-top: 10px; }
+  .edit-btn { background: #2196f3; color: white; border: none; padding: 8px; border-radius: 5px; cursor: pointer; flex: 1; font-weight: bold; }
+  .delete-btn { background: #ff4757; color: white; border: none; padding: 8px; border-radius: 5px; cursor: pointer; flex: 1; font-weight: bold; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="brand.html" class="btn-nav">⬅ Back</a>
+  <h2>Admin Panel</h2>
+  <a href="create.html" onclick="localStorage.removeItem('editIndex')" class="btn-nav" style="background: #2ecc71; color: white;">+ Add New</a>
+</div>
+
+<div id="adminList" class="container"></div>
+
+<script>
+let products = JSON.parse(localStorage.getItem("products")) || [];
+
+function showAdminList() {
+  let list = document.getElementById("adminList");
+  list.innerHTML = products.length ? "" : "<h3>No products to manage.</h3>";
+  
+  products.forEach((p, index) => {
+    let div = document.createElement("div");
+    div.className = "admin-card";
+    div.innerHTML = `
+      <img src="${p.image}">
+      <h4>${p.name}</h4>
+      <div class="btn-group">
+        <button class="edit-btn" onclick="editProduct(${index})">📝 Edit</button>
+        <button class="delete-btn" onclick="confirmDelete(${index})">🗑 Delete</button>
+      </div>
+    `;
+    list.appendChild(div);
+  });
+}
+
+// 📝 Edit Function
+function editProduct(index) {
+  // Hum edit hone waale product ka index save kar rahe hain
+  localStorage.setItem("editIndex", index);
+  // Wapas create page par bhej rahe hain jahan data auto-fill hoga
+  window.location.href = "create.html";
+}
+
+// 🗑 Delete Function
+function confirmDelete(index) {
+  Swal.fire({
+    title: 'Are you sure?',
+    text: "You won't be able to revert this!",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#ff4757',
+    confirmButtonText: 'Yes, delete it!',
+    background: '#1c2a3d',
+    color: '#fff'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      products.splice(index, 1);
+      localStorage.setItem("products", JSON.stringify(products));
+      showAdminList();
+      Swal.fire('Deleted!', 'Product has been removed.', 'success');
+    }
+  });
+}
+
+showAdminList();
+</script>
+</body>
+</html>

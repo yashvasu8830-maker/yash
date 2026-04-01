@@ -1,0 +1,165 @@
+<!doctype html>
+<html>
+<head>
+<title>Pro Products Market</title>
+<style>
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #1e3c72; color: white; margin: 0; text-align: center; }
+  .topbar { display: flex; align-items: center; padding: 15px; background: #0f2027; position: sticky; top: 0; z-index: 100; }
+  .back { background: white; color: black; padding: 8px 12px; border: none; border-radius: 5px; cursor: pointer; margin-right: 15px; font-weight: bold; }
+  
+  /* 🛠 Controls Section */
+  .controls { padding: 20px; background: rgba(0,0,0,0.3); display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; align-items: center; }
+  .controls input, .controls select { padding: 10px; border-radius: 5px; border: none; outline: none; min-width: 150px; }
+
+  /* 📦 Product Cards */
+  .container { display: flex; flex-wrap: wrap; justify-content: center; padding: 20px; gap: 20px; }
+  .card { background: rgba(255,255,255,0.1); padding: 15px; border-radius: 12px; width: 260px; transition: 0.3s; backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.1); }
+  .card:hover { transform: translateY(-8px); background: rgba(255,255,255,0.2); }
+  .card img { width: 100%; height: 180px; border-radius: 10px; object-fit: cover; }
+  .price-text { color: #2ecc71; font-weight: bold; font-size: 1.1em; margin: 10px 0; }
+  .view-btn { background: #2ecc71; color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer; width: 100%; font-weight: bold; }
+
+  /* 📄 Details Section */
+  #details { background: white; color: #333; margin: 40px auto; padding: 25px; border-radius: 15px; display: none; text-align: left; max-width: 550px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+  #details img { width: 100%; max-height: 350px; border-radius: 10px; object-fit: contain; background: #f4f4f4; }
+  
+  .btn-group { display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap; }
+  .contact-btn { flex: 1; padding: 12px; text-align: center; border-radius: 8px; text-decoration: none; font-weight: bold; color: white; min-width: 140px; border: none; cursor: pointer; }
+  .btn-wa { background: #25D366; }
+  .btn-mail { background: #3498db; }
+  .btn-close { background: #e74c3c; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="back" onclick="goBack()">⬅ Back</button>
+  <h2>Store</h2>
+</div>
+
+<div class="controls">
+  <input type="text" id="searchInput" placeholder="Search product name..." oninput="applyAllFilters()">
+  
+  <select id="catFilter" onchange="applyAllFilters()">
+    <option value="all">All Categories</option>
+  </select>
+
+  <select id="sortOrder" onchange="applyAllFilters()">
+    <option value="newest">Newest First</option>
+    <option value="low">Price: Low to High</option>
+    <option value="high">Price: High to Low</option>
+  </select>
+</div>
+
+<div id="list" class="container"></div>
+
+<div id="details">
+  <h2 id="dName" style="margin-top:0; color:#1e3c72;"></h2>
+  <img id="dImg">
+  <p><b>Price:</b> <span id="dPrice" style="font-size: 1.3em; color: #27ae60; font-weight:bold;"></span></p>
+  <p><b>Category:</b> <span id="dCategory"></span></p>
+   <p><b>Description:</b> <br><span id="dDesc" style="color:#555;"></span></p>
+  <p><b>Specifications:</b> <br><span id="dSpecs" style="color:#555;"></span></p>
+
+  <div class="btn-group">
+    <a id="btnWA" class="contact-btn btn-wa" target="_blank">WhatsApp Chat</a>
+    <a id="btnMail" class="contact-btn btn-mail" target="_blank">Send Email</a>
+    <button class="contact-btn btn-close" onclick="hideDetails()">Close</button>
+  </div>
+</div>
+
+<script>
+let products = JSON.parse(localStorage.getItem("products")) || [];
+
+// 1. Setup on Load
+function init() {
+  let catFilter = document.getElementById("catFilter");
+  let categories = [...new Set(products.map(p => p.category))];
+  categories.forEach(c => {
+    if(c) catFilter.innerHTML += `<option value="${c}">${c}</option>`;
+  });
+  applyAllFilters();
+}
+
+// 2. Filter, Search & Sort Logic
+function applyAllFilters() {
+  let search = document.getElementById("searchInput").value.toLowerCase();
+  let cat = document.getElementById("catFilter").value;
+  let sort = document.getElementById("sortOrder").value;
+
+  let filtered = products.filter(p => {
+    let matchName = p.name.toLowerCase().includes(search);
+    let matchCat = (cat === "all" || p.category === cat);
+    return matchName && matchCat;
+  });
+
+  if (sort === "low") filtered.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
+  else if (sort === "high") filtered.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
+  else if (sort === "newest") filtered.reverse();
+
+  render(filtered);
+}
+
+// 3. Render List with Price Fix
+function render(data) {
+  let list = document.getElementById("list");
+  list.innerHTML = data.length ? "" : "<h3>No products found ❌</h3>";
+  
+  data.forEach(p => {
+    let originalIndex = products.indexOf(p);
+    let div = document.createElement("div");
+    div.className = "card";
+    // Price display fixed using p.price directly
+    div.innerHTML = `
+      <img src="${p.image}">
+      <h3>${p.name}</h3>
+      <p class="price-text">₹${p.price}</p>
+      <button class="view-btn" onclick="view(${originalIndex})">View Details</button>
+    `;
+    list.appendChild(div);
+  });
+}
+
+// 4. View Details with Auto-Scroll
+function view(index) {
+  let p = products[index];
+  let detailsDiv = document.getElementById("details");
+
+  document.getElementById("dName").innerText = p.name;
+  document.getElementById("dImg").src = p.image;
+  document.getElementById("dCategory").innerText = p.category;
+  document.getElementById("dPrice").innerText = "₹" + p.price;
+  document.getElementById("dSpecs").innerText = p.specs || "N/A";
+  document.getElementById("dDesc").innerText = p.desc;
+
+  // WhatsApp
+  let waBtn = document.getElementById("btnWA");
+  if(p.mobile) {
+    let msg = encodeURIComponent(`Hello, I want to buy: ${p.name} (Price: ₹${p.price})`);
+    waBtn.href = `https://wa.me/${p.mobile}?text=${msg}`;
+    waBtn.style.display = "block";
+  } else {
+    waBtn.style.display = "none";
+  }
+
+  // Email
+  let mailBtn = document.getElementById("btnMail");
+  mailBtn.href = p.email ? `mailto:${p.email}?subject=Product Inquiry` : "#";
+
+  detailsDiv.style.display = "block";
+  
+  // Smooth scroll to details section
+  detailsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function hideDetails() { 
+  document.getElementById("details").style.display = "none";
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function goBack() { window.location.href = "brand.html"; }
+
+init();
+</script>
+</body>
+</html>

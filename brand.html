@@ -1,0 +1,179 @@
+<!doctype html>
+<html>
+<head>
+<title>Brand Marketing Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<style>
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    margin: 0;
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    color: white;
+    min-height: 100vh;
+  }
+
+  /* 🔹 Topbar without Shadow */
+  .topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background: #98aab1;
+    border-bottom: 1px solid rgba(83, 77, 77, 0.1);
+  }
+
+  .profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .profile img {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    border: 2px solid white;
+  }
+
+  #username {
+    font-weight: bold;
+  }
+
+  .actions {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  /* 🔹 Top Buttons - Shadow Removed */
+  .logout, .admin {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 120px;
+    box-shadow: none !important; /* Glow Removed */
+  }
+
+  .logout { background: #ff4b2b; color: white; }
+  .admin { background: #2196f3; color: white; }
+
+  /* 🔹 Main Container */
+  .container {
+    text-align: center;
+    margin-top: 80px;
+  }
+
+  /* Box without Shadow/Glow */
+  .box {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 40px;
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: none !important; /* Glow Removed */
+  }
+
+  /* 🔹 Action Buttons - Glow/Shadow Removed */
+  button {
+    padding: 15px;
+    margin: 10px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 200px;
+    transition: 0.3s;
+    box-shadow: none !important; /* Glow Removed */
+  }
+
+  .create {
+    background: linear-gradient(45deg, #f9fbf8, #9ea09f);
+    color: #333;
+  }
+
+  .view {
+    background: linear-gradient(45deg, #ff9800, #ff5722);
+    color: white;
+  }
+
+  button:hover {
+    transform: scale(1.05);
+    box-shadow: none !important; /* No Glow on Hover */
+  }
+
+  #total {
+    margin: 20px 0;
+    font-size: 20px;
+    color: #00e676;
+    font-weight: bold;
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <h2>Brand Marketing</h2>
+  <div class="profile">
+
+  </div>
+  <div class="actions">
+    <button class="admin" onclick="goAdmin()">Admin</button>
+    <button class="logout" onclick="handleLogout()">Logout</button>
+  </div>
+</div>
+
+<div class="container">
+  <div class="box">
+    <h1>Welcome !!</h1>
+    <h2 id="total"></h2>
+    <button class="create" onclick="goCreate()">➕ Create Product</button><br>
+    <button class="view" onclick="goView()">📦 View Products</button>
+  </div>
+</div>
+
+<script>
+  // 🔐 Security Check
+  if (localStorage.getItem("loggedIn") !== "true") {
+    window.location.href = "login.html";
+  }
+
+  // 📊 Product Count
+  let products = JSON.parse(localStorage.getItem("products")) || [];
+  document.getElementById("total").innerText = "Total Products: " + products.length;
+
+  function goCreate() {
+    localStorage.removeItem("editIndex");
+    window.location.href = "create.html";
+  }
+
+  function goView() {
+    window.location.href = "products.html";
+  }
+
+  function goAdmin() {
+    window.location.href = "admin.html";
+  }
+
+  // 🚪 Professional Logout Confirmation
+  function handleLogout() {
+    Swal.fire({
+      title: 'Logout?',
+      text: "Are you sure you want to exit?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#ff4b2b',
+      confirmButtonText: 'Logout',
+      background: '#1c2a3d',
+      color: '#fff'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        localStorage.removeItem("loggedIn");
+        window.location.href = "login.html";
+      }
+    });
+  }
+</script>
+
+</body>
+</html>

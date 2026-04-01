@@ -1,0 +1,130 @@
+<!doctype html>
+<html>
+<head>
+<title>Product Editor</title>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<style>
+  body { font-family: 'Segoe UI', Arial; background: #1e3c72; color: white; text-align: center; margin: 0; }
+  .topbar { display: flex; align-items: center; padding: 15px; background: #0f2027; }
+  .back { background: white; color: black; padding: 8px 12px; border-radius: 5px; text-decoration: none; font-weight: bold; margin-right: 15px; }
+  .form-container { max-width: 500px; margin: 20px auto; background: rgba(0,0,0,0.2); padding: 20px; border-radius: 15px; }
+  input, textarea, select { width: 90%; padding: 12px; margin: 10px 0; border-radius: 8px; border: none; outline: none; }
+  button#saveBtn { padding: 12px 40px; background: #27ae60; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px; }
+  img#preview { width: 200px; margin-top: 15px; border-radius: 10px; display: none; border: 2px solid white; }
+</style>
+</head>
+<body onload="checkEditMode()">
+
+<div class="topbar">
+  <a href="brand.html" class="back">⬅ Back</a>
+  <h2 id="pageTitle">Add New Product</h2>
+</div>
+
+<div class="form-container">
+  <input id="name" placeholder="Product Name *">
+  <select id="category">
+    <option value="">Select Category *</option>
+    <option value="Shoes">Shoes</option>
+    <option value="Mobile">Mobile</option>
+    <option value="Laptop">Laptop</option>
+    <option value="Bags">Bags</option>
+  </select>
+  <input id="price" type="number" placeholder="Price *">
+  <input id="mobile" type="tel" placeholder="Mobile (10 Digits) *">
+  <input id="email" type="email" placeholder="Email Address *">
+  <textarea id="desc" placeholder="Description"></textarea>
+  <textarea id="specs" placeholder="Specifications"></textarea>
+  <input type="file" id="image" accept="image/*" onchange="handleImg(this)">
+  <img id="preview">
+  <br><br>
+  <button id="saveBtn" onclick="save()">Save Product</button>
+</div>
+
+<script>
+let imgData = "";
+let editIndex = localStorage.getItem("editIndex");
+
+// 1. Check if we are Editing or Adding New
+function checkEditMode() {
+  if (editIndex !== null) {
+    document.getElementById("pageTitle").innerText = "Edit Product 📝";
+    document.getElementById("saveBtn").innerText = "Update Product";
+    
+    let products = JSON.parse(localStorage.getItem("products")) || [];
+    let p = products[editIndex];
+
+    // Fill form with existing data
+    document.getElementById("name").value = p.name;
+    document.getElementById("category").value = p.category;
+    document.getElementById("price").value = p.price;
+    document.getElementById("mobile").value = p.mobile || "";
+    document.getElementById("specs").value = p.specs || "";
+    document.getElementById("desc").value = p.desc || "";
+    imgData = p.image;
+    
+    if(imgData) {
+      document.getElementById("preview").src = imgData;
+      document.getElementById("preview").style.display = "inline-block";
+    }
+  }
+}
+
+function handleImg(input) {
+  let file = input.files[0];
+  if(file) {
+    let reader = new FileReader();
+    reader.onload = (e) => {
+      imgData = e.target.result;
+      document.getElementById("preview").src = imgData;
+      document.getElementById("preview").style.display = "inline-block";
+    };
+    reader.readAsDataURL(file);
+  }
+}
+
+function save() {
+  let name = document.getElementById("name").value.trim();
+  let cat = document.getElementById("category").value;
+  let price = document.getElementById("price").value;
+  let mob = document.getElementById("mobile").value.trim();
+
+  if(!name || !cat || !price || !mob || !imgData) {
+    Swal.fire('Error', 'Please fill all required fields and upload image!', 'error');
+    return;
+  }
+
+  let products = JSON.parse(localStorage.getItem("products")) || [];
+  let newProduct = {
+    name: name,
+    category: cat,
+    price: price,
+    mobile: mob,
+    specs: document.getElementById("specs").value,
+    image: imgData,
+    desc: document.getElementById("desc").value,
+    date: new Date().getTime()
+  };
+
+  if (editIndex !== null) {
+    // 📝 Update existing product
+    products[editIndex] = newProduct;
+    localStorage.removeItem("editIndex"); // Clear edit mode
+  } else {
+    // ➕ Add new product
+    products.push(newProduct);
+  }
+
+  localStorage.setItem("products", JSON.stringify(products));
+
+  Swal.fire({
+    icon: 'success',
+    title: editIndex !== null ? 'Updated Successfully!' : 'Saved Successfully!',
+    showConfirmButton: false,
+    timer: 1500
+  }).then(() => {
+    window.location.href = "brand.html";
+  });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+<head>
+<title>Marketing App</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background:linear-gradient(135deg,#1e3c72,#2a5298);
+  color:white;
+  text-align:center;
+}
+
+.container{
+  margin-top:100px;
+}
+
+h1{
+  font-size:40px;
+}
+
+button{
+  padding:12px 20px;
+  margin:10px;
+  border:none;
+  border-radius:8px;
+  font-size:16px;
+  cursor:pointer;
+}
+
+.start{background:#f3f5f4;color:rgb(30, 29, 29);}
+.view{background:#ff5252;color:rgb(12, 12, 12);}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🚀 Marketing Generator</h1>
+<p>Create and manage your product marketing pages easily</p>
+
+<button class="start" onclick="start()">➕ Create Product</button>
+<button class="view" onclick="view()">📦 View Products</button>
+
+</div>
+
+<script>
+function start(){
+  window.location.href="create.html";
+}
+
+function view(){
+  window.location.href="products.html";
+}
+</script>
+
+</body>
+</html>

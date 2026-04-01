@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+<head>
+<title>Edit Product</title>
+
+<style>
+body{font-family:Arial;background:#1e3c72;color:white;text-align:center}
+input,textarea,select{width:80%;padding:10px;margin:10px}
+button{padding:10px;background:orange;color:white;border:none}
+</style>
+
+</head>
+
+<body>
+
+<h1>Edit Product</h1>
+
+<input id="name"><br>
+
+<select id="category">
+<option value="Shoes">Shoes</option>
+<option value="Mobile">Mobile</option>
+<option value="Laptop">Laptop</option>
+<option value="Bags">Bags</option>
+</select><br>
+
+<input id="price"><br>
+<input id="email"><br>
+
+<textarea id="specs"></textarea><br>
+<input id="image"><br>
+<textarea id="desc"></textarea><br>
+
+<button onclick="update()">Update</button>
+
+<script>
+let products = JSON.parse(localStorage.getItem("products")) || [];
+let index = localStorage.getItem("editIndex");
+
+let p = products[index];
+
+document.getElementById("name").value = p.name;
+document.getElementById("category").value = p.category;
+document.getElementById("price").value = p.price;
+document.getElementById("email").value = p.email;
+document.getElementById("specs").value = p.specs;
+document.getElementById("image").value = p.image;
+document.getElementById("desc").value = p.desc;
+
+function update(){
+  products[index] = {
+    name: document.getElementById("name").value,
+    category: document.getElementById("category").value,
+    price: document.getElementById("price").value,
+    email: document.getElementById("email").value,
+    specs: document.getElementById("specs").value,
+    image: document.getElementById("image").value,
+    desc: document.getElementById("desc").value
+  };
+
+  localStorage.setItem("products", JSON.stringify(products));
+
+  alert("Updated ✅");
+
+  window.location.href = "admin.html";
+}
+</script>
+
+</body>
+</html>
