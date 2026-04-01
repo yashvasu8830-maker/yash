@@ -1,0 +1,165 @@
+<!doctype html>
+<html>
+<head>
+<title>Create Your Account</title>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #141e30, #243b55); /* Matching Login Gradient */
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    color: white;
+  }
+
+  .signup-box {
+    background: rgba(255, 255, 255, 0.1); /* Glassmorphism translucent effect */
+    backdrop-filter: blur(12px);
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+    width: 320px;
+    border: 1px solid rgba(255,255,255,0.1);
+    text-align: center;
+    transition: 0.3s;
+  }
+
+  h1 { margin-bottom: 25px; font-weight: 300; letter-spacing: 2px; }
+
+  .input-group { position: relative; margin-bottom: 20px; text-align: left; }
+
+  input {
+    width: 100%;
+    padding: 12px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 8px;
+    color: white;
+    outline: none;
+    box-sizing: border-box; /* Crucial for width in padding */
+    transition: 0.3s;
+    font-size: 14px;
+  }
+
+  input:focus {
+    border-color: #2ecc71; /* Green border on focus */
+    background: rgba(255,255,255,0.1);
+  }
+
+  button#signupBtn {
+    background: #2ecc71; /* New Signup Green */
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    width: 100%;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-top: 10px;
+    box-shadow: 0 4px 15px rgba(46,204,113,0.3);
+  }
+
+  button#signupBtn:hover {
+    background: #27ae60;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(46,204,113,0.4);
+  }
+
+  .links { margin-top: 25px; font-size: 14px; color: #bbb; }
+  .links a { color: #2ecc71; text-decoration: none; font-weight: bold; }
+
+  #togglePass {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 12px;
+    color: #bbb;
+    user-select: none;
+  }
+</style>
+</head>
+<body>
+
+<div class="signup-box">
+  <h1>CREATE</h1>
+
+  <div class="input-group">
+    <input type="text" id="user" placeholder=" Username *">
+  </div>
+
+  <div class="input-group">
+    <input type="password" id="pass" placeholder=" Password *">
+    <span id="togglePass" onclick="togglePassword()">SHOW</span>
+  </div>
+
+  <button id="signupBtn" onclick="signup()">Sign Up Now</button>
+
+  <div class="links">
+    Already have an account? <a href="login.html">Login</a>
+  </div>
+</div>
+
+<script>
+// 1. Password Show/Hide Toggle
+function togglePassword() {
+  let passInput = document.getElementById("pass");
+  let toggleBtn = document.getElementById("togglePass");
+  if (passInput.type === "password") {
+    passInput.type = "text";
+    toggleBtn.innerText = "HIDE";
+  } else {
+    passInput.type = "password";
+    toggleBtn.innerText = "SHOW";
+  }
+}
+
+// 2. Upgraded Signup Logic with SweetAlert2
+function signup() {
+  let u = document.getElementById("user").value.trim();
+  let p = document.getElementById("pass").value.trim();
+
+  // 🔥 Validation Check
+  if (!u || !p) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Oops...',
+      text: 'Username and Password cannot be empty! ❗'
+    });
+    return;
+  }
+
+  // Optional: Add Password Complexity check here if needed
+
+  // 1. Save data to localStorage
+  localStorage.setItem("username", u); //
+  localStorage.setItem("password", p); //
+
+  // 2. Clear inputs
+  document.getElementById("user").value = "";
+  document.getElementById("pass").value = "";
+
+  // 3. SweetAlert2 Success Message with Redirect
+  Swal.fire({
+    icon: 'success',
+    title: 'Signup Success! ✅',
+    text: 'You can now log in to your account.',
+    showConfirmButton: true,
+    confirmButtonText: 'Go to Login',
+    confirmButtonColor: '#ff4b2b' // Login page color matching
+  }).then((result) => {
+    if (result.isConfirmed) {
+      window.location.href = "login.html"; //
+    }
+  });
+}
+</script>
+
+</body>
+</html>
